@@ -69,7 +69,6 @@ class InstallWidget {
       this.parentElement.closest('section').classList.add('widget_section');
       this.installStyles();
 
-      console.log(this.getWidgetBlock(this.parentElement, className));
       if (this.getWidgetBlock(this.parentElement, className)) {
         this.removeOldCode('iframe[srcdoc*="' + className + '"]');
       } else {
