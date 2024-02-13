@@ -31,7 +31,7 @@ class InstallWidget {
     const styleElement = document.createElement('style');
     styleElement.textContent =
       '.widget_section, .widget_section :is([data-ux=Grid],[data-ux=GridCell],[data-ux=Element],iframe) {margin: 0!important; padding: 0!important;}';
-    this.body.appendChild(styleElement);
+    this.body.prepend(styleElement);
   }
 
   getAttribute(element, attributeName) {
