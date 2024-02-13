@@ -2,7 +2,8 @@ var WIDGET_BASE_URL = 'https://static.elfsight.com/platform/platform.js',
   insertWidget = function t(e, i, r) {
     var a = document.createElement('div');
     return (
-      a.classList.add(i), r ? document.body.appendChild(a) : e.appendChild(a)
+      a.classList.add(i),
+      r ? e.ownerDocument.body.appendChild(a) : e.appendChild(a)
     );
   },
   loadPlatformScript = function t(e) {
@@ -27,7 +28,7 @@ var WIDGET_BASE_URL = 'https://static.elfsight.com/platform/platform.js',
         r = document.querySelector('[class*="elfsight-app"]');
       if (r && i) {
         var a = getAttributeValue(r, 'class'),
-          n = null !== getAttributeValue(r, 'floating'),
+          n = getAttributeValue(r, 'floating') !== null,
           l = e.parentNode;
         (l.closest('section').classList.add('section_with_elfsigth_widget'),
         insertStyles(l),
