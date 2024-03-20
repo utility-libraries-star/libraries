@@ -4,35 +4,29 @@ class InstallWidget {
     this.platformUrl = url;
 
     this.currentFrame = window.frameElement;
-    this.parentElement = this.currentFrame && this.currentFrame.parentNode;
+    this.parentElement =
+      this.currentFrame &&
+      (this.currentFrame.parentElement.closest('[data-ux="GridCell"]') ||
+        this.currentFrame.parentNode);
     this.body = this.parentElement && this.parentElement.ownerDocument.body;
   }
 
-  installWidget(className, isFloating) {
-    const container = document.createElement('div');
-    container.classList.add(className);
-    this.isAddedWidget = true;
-
-    if (isFloating) {
-      this.body.prepend(container);
-      return;
-    }
-    this.parentElement.appendChild(container);
-  }
-
-  installPlatform() {
+  installPlatform(container) {
     const scriptElement = document.createElement('script');
     scriptElement.src = this.platformUrl;
     scriptElement.dataset.useServiceCore = 'true';
     scriptElement.defer = true;
-    this.parentElement.appendChild(scriptElement);
+    container.prepend(scriptElement);
   }
 
-  installStyles() {
-    const styleElement = document.createElement('style');
-    styleElement.textContent =
-      '.widget_section, .widget_section :is([data-ux=Grid],[data-ux=GridCell],[data-ux=Element],iframe) {margin: 0!important; padding: 0!important;}';
-    this.body.prepend(styleElement);
+  installWidget(className, isFloating) {
+    const widget = document.createElement('div');
+    widget.classList.add(className);
+    const container = isFloating ? this.body : this.parentElement;
+    this.isAddedWidget = true;
+
+    this.installPlatform(container);
+    container.prepend(widget);
   }
 
   getAttribute(element, attributeName) {
@@ -67,14 +61,10 @@ class InstallWidget {
       const className = this.getAttribute(widgetElement, 'class');
       const isFloating = this.getAttribute(widgetElement, 'floating');
 
-      this.parentElement.closest('section').classList.add('widget_section');
-      this.installStyles();
-
       if (this.getWidgetBlock(this.parentElement, className)) {
         this.removeOldCode('iframe[srcdoc*="' + className + '"]');
       } else {
         requestAnimationFrame(() => {
-          this.installPlatform();
           this.installWidget(className, isFloating);
           this.currentFrame.remove();
         });
@@ -86,6 +76,6 @@ class InstallWidget {
 window.addEventListener('DOMContentLoaded', () => {
   const installWidget = new InstallWidget(
     'https://static.elfsight.com/platform/platform.js'
-    );
+  );
   installWidget.initial();
 });
