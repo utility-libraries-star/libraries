@@ -24,6 +24,7 @@ class InstallWidget {
     const scriptElement = document.createElement('script');
     scriptElement.src = this.platformUrl;
     scriptElement.dataset.useServiceCore = 'true';
+    scriptElement.defer = true;
     this.parentElement.appendChild(scriptElement);
   }
 
@@ -85,6 +86,6 @@ class InstallWidget {
 window.addEventListener('DOMContentLoaded', () => {
   const installWidget = new InstallWidget(
     'https://static.elfsight.com/platform/platform.js'
-  );
+    );
   installWidget.initial();
 });
