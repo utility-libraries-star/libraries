@@ -25,8 +25,7 @@
   const generatePlatform = (platformURL) => {
     const platform = document.createElement('script');
     platform.src = platformURL;
-    platform.dataset.useServiceCore = 'true';
-    platform.defer = true;
+    platform.async = true;
     return platform;
   };
 

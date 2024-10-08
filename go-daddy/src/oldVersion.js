@@ -12,15 +12,15 @@ class InstallWidget {
   }
 
   installPlatform(container) {
-    const scriptElement = document.createElement("script");
+    const scriptElement = document.createElement('script');
     scriptElement.src = this.platformUrl;
-    scriptElement.dataset.useServiceCore = "true";
+    scriptElement.dataset.useServiceCore = 'true';
     scriptElement.defer = true;
     container.prepend(scriptElement);
   }
 
   installWidget(className, isFloating) {
-    const widget = document.createElement("div");
+    const widget = document.createElement('div');
     widget.classList.add(className);
     const container = isFloating ? this.body : this.parentElement;
     this.isAddedWidget = true;
@@ -32,13 +32,13 @@ class InstallWidget {
   getAttribute(element, attributeName) {
     if (element && attributeName) {
       const attributeValue = element.getAttribute(attributeName);
-      return attributeValue === "" || attributeValue;
+      return attributeValue === '' || attributeValue;
     }
     return null;
   }
 
   getWidgetBlock(parentElement, className) {
-    const currentClassName = className || "elfsight-app";
+    const currentClassName = className || 'elfsight-app';
     return parentElement.querySelector('[class*="' + currentClassName + '"]');
   }
 
@@ -54,12 +54,12 @@ class InstallWidget {
   initial() {
     if (!this.currentFrame) return;
 
-    const isNotEditor = !this.currentFrame.baseURI.includes("editor");
+    const isNotEditor = !this.currentFrame.baseURI.includes('editor');
     const widgetElement = this.getWidgetBlock(document);
 
     if (widgetElement && isNotEditor && !this.isAddedWidget) {
-      const className = this.getAttribute(widgetElement, "class");
-      const isFloating = this.getAttribute(widgetElement, "floating");
+      const className = this.getAttribute(widgetElement, 'class');
+      const isFloating = this.getAttribute(widgetElement, 'floating');
 
       if (this.getWidgetBlock(this.parentElement, className)) {
         this.removeOldCode('iframe[srcdoc*="' + className + '"]');
@@ -73,9 +73,9 @@ class InstallWidget {
   }
 }
 
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener('DOMContentLoaded', () => {
   const installWidget = new InstallWidget(
-    "https://static.elfsight.com/platform/platform.js"
+    'https://static.elfsight.com/platform/platform.js'
   );
   installWidget.initial();
 });
