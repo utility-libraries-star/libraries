@@ -1,23 +1,15 @@
+import { createEditorBanner } from '../components/banner';
+
 ((currentScript) => {
   const FLOATING_ATTRIBUTE = 'floating';
   const DEFAULT_PLATFORM_URL =
     'https://static.elfsight.com/platform/platform.js';
 
   const createBanner = () => {
-    const banner = document.createElement('div');
-    banner.style.position = 'fixed';
-    banner.style.top = '50%';
-    banner.style.left = '50%';
-    banner.style.transform = 'translate(-50%, -50%)';
-    banner.style.zIndex = '9999';
-    banner.style.padding = '10px 20px';
-    banner.style.color = '#fff';
-    banner.style.backgroundColor = '#f44336';
-    banner.style.borderRadius = '5px';
-    banner.style.fontFamily = 'Arial, sans-serif';
-    banner.style.fontSize = '16px';
-    banner.style.boxShadow = '0px 4px 6px rgba(0, 0, 0, 0.1)';
-    banner.textContent = 'Widget(s) are hidden in editing mode';
+    const banner = createEditorBanner({
+      message: 'Widget(s) are hidden in editing mode',
+      type: 'error'
+    });
     document.body.style.minHeight = '50px';
     document.body.prepend(banner);
   };

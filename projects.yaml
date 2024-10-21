@@ -1,0 +1,18 @@
+projects:
+  - name: go-daddy
+    outputName: install-widget-on-godaddy.js
+    version: 1.0.1
+
+  - name: hostinger
+    outputName: install-widget-on-hostinger.js
+    version: 1.0.1
+
+  - name: analytics
+    parent: go-daddy
+    outputName: install-analytics-on-godaddy.js
+    version: 1.0.0
+
+  - name: analytics
+    parent: hostinger
+    outputName: install-analytics-on-hostinger.js
+    version: 1.0.0

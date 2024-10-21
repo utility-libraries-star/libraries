@@ -1,76 +1,72 @@
 const path = require('path');
-const fs = require('fs-extra');
 const TerserPlugin = require('terser-webpack-plugin');
+const fs = require('fs');
+const yaml = require('js-yaml');
+
+const projectsConfig = yaml.load(fs.readFileSync('projects.yaml', 'utf8'));
+
+const entry = {};
+
+projectsConfig.projects.forEach((project) => {
+  const projectPath = path.resolve(__dirname, `src/${project.name}/index.js`);
+
+  if (fs.existsSync(projectPath)) {
+    const projectName =
+      project.name + (project.parent ? `_${project.parent}` : '');
+    entry[projectName] = projectPath;
+  }
+});
 
 module.exports = {
-  entry: './go-daddy/src/index.js',
+  mode: 'production',
+  entry: entry,
+
   output: {
-    filename: 'install-widget-on-godaddy.js',
-    path: path.resolve(__dirname, './go-daddy/')
+    filename: (pathData) => {
+      const project = projectsConfig.projects.find((p) => {
+        const nameWithParent = pathData.chunk.name.split('_');
+        const projectName = nameWithParent[0];
+        const parentName = nameWithParent[1];
+
+        return p.name === projectName && (!p.parent || p.parent === parentName);
+      });
+
+      const outputDir = project.parent || project.name;
+
+      return `${outputDir}/${project.outputName}`;
+    },
+    path: path.resolve(__dirname)
   },
+
   module: {
     rules: [
       {
         test: /\.js$/,
-        exclude: /node_modules/,
+        exclude: [
+          path.resolve(__dirname, 'src/components'),
+          path.resolve(__dirname, 'src/utils')
+        ],
         use: {
           loader: 'babel-loader',
           options: {
-            presets: [
-              [
-                '@babel/preset-env',
-                {
-                  useBuiltIns: 'usage',
-                  corejs: 3
-                }
-              ]
-            ]
+            presets: ['@babel/preset-env']
           }
         }
       }
     ]
   },
+
   optimization: {
     minimize: true,
-    minimizer: [new TerserPlugin()]
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          compress: true,
+          mangle: true
+        }
+      })
+    ]
   },
-  plugins: [
-    {
-      apply: (compiler) => {
-        compiler.hooks.afterEmit.tapAsync('AfterEmitPlugin', (_, callback) => {
-          const sourceFile = path.resolve(
-            __dirname,
-            'go-daddy/install-widget-on-godaddy.js'
-          );
-          const destinationFile = path.resolve(
-            __dirname,
-            'hostinger/install-widget-on-hostinger.js'
-          );
 
-          fs.pathExists(sourceFile, (err, exists) => {
-            if (err) {
-              console.error('Error checking file existence:', err);
-              return callback(err);
-            }
-
-            if (exists) {
-              fs.copy(sourceFile, destinationFile, (copyErr) => {
-                if (copyErr) {
-                  console.error('Error copying file:', copyErr);
-                  return callback(copyErr);
-                }
-
-                console.log('File copied successfully to Hostinger directory!');
-                callback();
-              });
-            } else {
-              console.warn('Source file does not exist yet. Skipping copy.');
-              callback();
-            }
-          });
-        });
-      }
-    }
-  ],
-  mode: 'production'
+  watch: false
 };
