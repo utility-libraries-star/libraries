@@ -1,11 +1,11 @@
 projects:
   - name: go-daddy
     outputName: install-widget-on-godaddy.js
-    version: 1.0.1
+    version: 1.0.2
 
   - name: hostinger
     outputName: install-widget-on-hostinger.js
-    version: 1.0.1
+    version: 1.0.2
 
   - name: analytics
     parent: go-daddy
