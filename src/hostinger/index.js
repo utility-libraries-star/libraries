@@ -4,6 +4,7 @@ import { createEditorBanner } from '../components/banner';
   const FLOATING_ATTRIBUTE = 'floating';
   const DEFAULT_PLATFORM_URL =
     'https://static.elfsight.com/platform/platform.js';
+  const EDITOR_PATHS = ['editor', 'builder.hostinger.com'];
 
   const createBanner = () => {
     const banner = createEditorBanner({
@@ -27,15 +28,30 @@ import { createEditorBanner } from '../components/banner';
     return widget;
   };
 
+  const checkEditor = () => {
+    const currentFrame = window.frameElement;
+    const parentURL = window.location.ancestorOrigins[0];
+
+    if (!currentFrame && !parentURL) {
+      return false;
+    }
+
+    if (currentFrame) {
+      return EDITOR_PATHS.some((path) => currentFrame.baseURI.includes(path));
+    }
+
+    if (parentURL) {
+      return EDITOR_PATHS.some((path) => parentURL.includes(path));
+    }
+
+    return false;
+  };
+
   const initializeWidgets = () => {
     const currentFrame = window.frameElement;
 
-    if (!currentFrame) return;
-
     const widgets = [...document.querySelectorAll('[class*="elfsight-app"]')];
-    const isEditor =
-      currentFrame.baseURI.includes('editor') ||
-      currentFrame.baseURI.includes('builder.hostinger.com');
+    const isEditor = checkEditor();
 
     if (isEditor || !widgets.length) {
       if (isEditor) {
@@ -44,6 +60,13 @@ import { createEditorBanner } from '../components/banner';
           createBanner();
         }
       }
+      return;
+    }
+
+    if (!isEditor && !currentFrame) {
+      const platform = generatePlatform(DEFAULT_PLATFORM_URL);
+      document.head.appendChild(platform);
+
       return;
     }
 
